@@ -2,5 +2,5 @@
 
 public class NutritionData
 {
-
+    public int CalorieIntake { get; set; }
 }

@@ -2,5 +2,5 @@
 
 public class BodyData
 {
-
+    public float Bodyweight { get; set; }
 }
