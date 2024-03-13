@@ -5,11 +5,11 @@ public class Person
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
 
-    public List<BodyRecord> BodyDataList { get; set; } = new();
-    public List<Run> RunDataList { get; set; } = new();
-    public List<Workout> StrengthDataList { get; set; } = new();
-    public List<SportSession> VersatileTrainingDataList { get; set; } = new();
-    public List<SleepRecord> SleepDataList { get; set; } = new();
-    public List<NutritionRecord> NutritionDataList { get; set; } = new();
-    public List<MentalRecord> MentalDataList { get; set; } = new();
+    public List<BodyRecord> BodyRecordList { get; set; } = new();
+    public List<Run> RunList { get; set; } = new();
+    public List<Workout> WorkoutList { get; set; } = new();
+    public List<SportSession> SportSessionList { get; set; } = new();
+    public List<SleepRecord> SleepRecordList { get; set; } = new();
+    public List<NutritionRecord> NutritionRecordList { get; set; } = new();
+    public List<MentalRecord> MentalRecordList { get; set; } = new();
 }

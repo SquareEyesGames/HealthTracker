@@ -4,7 +4,7 @@ namespace Gold.HealthTracker.DBModel;
 
 public class HealthTrackerContext : DbContext
 {
-    public DbSet<Person> Persons => Set<Person>();      // { get { return Set<Person>();} }
+    public DbSet<Person> Persons => Set<Person>();      // = { get { return Set<Person>();} }
     public DbSet<BodyRecord> BodyRecords => Set<BodyRecord>();
     public DbSet<Run> Runs => Set<Run>();
     public DbSet<Workout> Workouts => Set<Workout>();
