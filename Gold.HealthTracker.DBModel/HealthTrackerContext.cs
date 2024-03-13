@@ -12,4 +12,10 @@ public class HealthTrackerContext : DbContext
     public DbSet<NutritionRecord> NutritionRecords => Set<NutritionRecord>();
     public DbSet<SleepRecord> SleepRecords => Set<SleepRecord>();
     public DbSet<MentalRecord> MentalRecords => Set<MentalRecord>();
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS01;Database=HealthTracker;Trusted_Connection=True;TrustServerCertificate=True;");
+    }
 }
