@@ -1,6 +1,6 @@
 ﻿namespace Gold.HealthTracker.DBModel;
 
-public class RunData : GeneralTrainingData
+public class Run : GeneralActivity
 {
     public float Distance { get; set; }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Gold.HealthTracker.DBModel;
 
-public class VersatileTrainingData : GeneralTrainingData
+public class SportSession : GeneralActivity
 {
     public string Sport { get; set; } = string.Empty;
 }

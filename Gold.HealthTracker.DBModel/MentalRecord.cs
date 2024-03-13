@@ -1,7 +1,7 @@
 ﻿namespace Gold.HealthTracker.DBModel;
 
-public class NutritionData
+public class MentalRecord
 {
     public int Id { get; set; }
-    public int CalorieIntake { get; set; }
+    public int StressLevel { get; set; }
 }
