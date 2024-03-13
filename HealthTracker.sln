@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gold.HealthTracker.DBModel", "Gold.HealthTracker.DBModel\Gold.HealthTracker.DBModel.csproj", "{7A483EEE-399F-48FE-BD3F-7531E8654D68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gold.HealthTracker.ConsoleApp", "Gold.HealthTracker.ConsoleApp\Gold.HealthTracker.ConsoleApp.csproj", "{9249FD72-DF79-4DF3-988A-ABAC9A0EC46A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{7A483EEE-399F-48FE-BD3F-7531E8654D68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A483EEE-399F-48FE-BD3F-7531E8654D68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A483EEE-399F-48FE-BD3F-7531E8654D68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9249FD72-DF79-4DF3-988A-ABAC9A0EC46A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9249FD72-DF79-4DF3-988A-ABAC9A0EC46A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9249FD72-DF79-4DF3-988A-ABAC9A0EC46A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9249FD72-DF79-4DF3-988A-ABAC9A0EC46A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
