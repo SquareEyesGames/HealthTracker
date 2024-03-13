@@ -6,4 +6,6 @@ public class Exercise
     public int Sets { get; set; }
     public int Repetitions { get; set; }
     public float ResistanceWeight { get; set; }
+
+    public Exercise(){}
 }
