@@ -17,5 +17,6 @@ public class HealthTrackerContext : DbContext
     {
         base.OnConfiguring(optionsBuilder);
         optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS01;Database=HealthTracker;Trusted_Connection=True;TrustServerCertificate=True;");
+        optionsBuilder.UseLazyLoadingProxies();
     }
 }
