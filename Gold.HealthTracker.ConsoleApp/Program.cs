@@ -1,49 +1,64 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Gold.HealthTracker.DBModel;
+﻿using Gold.HealthTracker.DBModel;
+using Microsoft.EntityFrameworkCore;
 
 HealthTrackerContext context = new();
 
 context.Database.EnsureCreated();
 
-var existingPerson = context.Persons.FirstOrDefault(p => p.Name == "Thomas");
+Person? existingPerson = context.Persons
+   .Include(p => p.BodyRecordList)
+   .Include(p => p.RunList)
+   .Include(p => p.WorkoutList)
+   .Include(p => p.SportSessionList)
+   .Include(p => p.SleepRecordList)
+   .Include(p => p.NutritionRecordList)
+   .Include(p => p.MentalRecordList)
+   .FirstOrDefault(p => p.Name == "Thomas");
 
 if(existingPerson == null)
 {
-var person = new Person()
-{
-     Name = "Thomas",
-     BodyRecordList = new List<BodyRecord>()
-     {
-        new BodyRecord() {Bodyweight = 87.45f}
-     },
-     RunList = new List<Run>()
-     {
-        new Run() {Distance = 7.78f, DateOfRecord = DateTime.Now}
-     },
-     NutritionRecordList = new List<NutritionRecord>()
-     {
-         new NutritionRecord() { CalorieIntake = 2750}
-     },
-     MentalRecordList = new List<MentalRecord>()
-     {
-        new MentalRecord() { StressLevel = 7 }
-     }
-};
+   existingPerson = new Person()
+   {
+      Name = "Thomas",
+   };
+   Console.WriteLine($"Person mit Namen {existingPerson.Name} erstellt");
 
-Console.WriteLine($"Person mit id {person.Id} und name {person.Name} erstellt");
-
-context.Persons.Add(person);
-
-Console.WriteLine($"Person mit id {person.Id} und name {person.Name} hinzugefügt");
-
-context.SaveChanges();
-
-Console.WriteLine($"Person mit id {person.Id} und name {person.Name} gespeichert");
+   context.Persons.Add(existingPerson);
+   Console.WriteLine($"Person mit Namen {existingPerson.Name} hinzugefügt und Id {existingPerson.Id} zugewiesen");
 }
 else
 {
    Console.WriteLine($"Person mit id {existingPerson.Id} und Name {existingPerson.Name} existiert bereits in der Datenbank");
 }
 
-foreach(var pers in context.Persons)
-    Console.WriteLine($"Person mit id {pers.Id} und name {pers.Name} ausgewählt.");
+// Creates a new BodyRecord for Thomas
+existingPerson.BodyRecordList.Add(new BodyRecord {DateOfRecord = DateTime.Now, Bodyweight = 86.60f});
+context.SaveChanges();
+Console.WriteLine($"Ändergungen gespeichert");
+ShowBodyRecords(existingPerson);
+
+// Updates the last created BodyRecord
+BodyRecord oldestRecord = existingPerson.BodyRecordList.OrderBy(r => r.DateOfRecord).Last();
+oldestRecord.Bodyweight = 85.00f;
+context.SaveChanges();
+Console.WriteLine($"Ändergungen gespeichert");
+ShowBodyRecords(existingPerson);
+
+// Deletes the last BodyRecord for Thomas (if any exist)
+if(existingPerson.BodyRecordList.Any())
+{
+   context.BodyRecords.Remove(oldestRecord);
+   context.SaveChanges();
+   Console.WriteLine($"Ändergungen gespeichert");
+   ShowBodyRecords(existingPerson);
+}
+
+// Prints all entrys in the BodyRecords Table
+static void ShowBodyRecords(Person person)
+{
+   Console.WriteLine($"Alle Gewichtsmessungen für {person.Name}: ");
+   foreach (var record in person.BodyRecordList)
+   {
+      Console.WriteLine(record.DateOfRecord + ": " + record.Bodyweight + "kg");
+   }
+}
