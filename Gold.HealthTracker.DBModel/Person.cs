@@ -5,11 +5,11 @@ public class Person
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
 
-    public List<BodyRecord> BodyRecordList { get; set; } = new();
-    public List<Run> RunList { get; set; } = new();
-    public List<Workout> WorkoutList { get; set; } = new();
-    public List<SportSession> SportSessionList { get; set; } = new();
-    public List<SleepRecord> SleepRecordList { get; set; } = new();
-    public List<NutritionRecord> NutritionRecordList { get; set; } = new();
-    public List<MentalRecord> MentalRecordList { get; set; } = new();
+    public virtual ICollection<BodyRecord> BodyRecords { get; set; } = new List<BodyRecord>();
+    public virtual ICollection<Run> Runs { get; set; } = new List<Run>();
+    public virtual ICollection<Workout> Workouts { get; set; } = new List<Workout>();
+    public virtual ICollection<SportSession> SportSessions { get; set; } = new List<SportSession>();
+    public virtual ICollection<SleepRecord> SleepRecords { get; set; } = new List<SleepRecord>();
+    public virtual ICollection<NutritionRecord> NutritionRecords { get; set; } = new List<NutritionRecord>();
+    public virtual ICollection<MentalRecord> MentalRecords { get; set; } = new List<MentalRecord>();
 }

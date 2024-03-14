@@ -31,7 +31,7 @@ else
    Console.WriteLine($"Person mit id {existingPerson.Id} und Name {existingPerson.Name} existiert bereits in der Datenbank");
 }
 
-// Creates a new BodyRecord for Thomas
+// Creates a new BodyRecord for existingPerson
 existingPerson.BodyRecordList.Add(new BodyRecord {DateOfRecord = DateTime.Now, Bodyweight = 86.60f});
 context.SaveChanges();
 Console.WriteLine($"Ändergungen gespeichert");
@@ -44,7 +44,7 @@ context.SaveChanges();
 Console.WriteLine($"Ändergungen gespeichert");
 ShowBodyRecords(existingPerson);
 
-// Deletes the last BodyRecord for Thomas (if any exist)
+// Deletes the last BodyRecord for existingPerson (if any exist)
 if(existingPerson.BodyRecordList.Any())
 {
    context.BodyRecords.Remove(oldestRecord);
