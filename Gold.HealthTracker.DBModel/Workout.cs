@@ -2,5 +2,5 @@
 
 public class Workout : GeneralActivity
 {
-    public List<Exercise> Exercises { get; set; } =new();
+    public List<Exercise> Exercises { get; set; } = new();
 }
