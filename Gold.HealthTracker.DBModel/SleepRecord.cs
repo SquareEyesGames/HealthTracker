@@ -2,7 +2,9 @@
 
 public class SleepRecord
 {
+    // Primary key of the SleepRecord entity
     public int Id { get; set; }
+    // Nullable virtual navigation property back to Person. The '?' and 'virtual' indicate it supports lazy loading and may not always have a value.
     public virtual Person? Person { get; set; }
     public DateTime DateOfRecord { get; set; }
     public DateTime Bedtime { get; set; }

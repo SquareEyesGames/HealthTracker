@@ -2,9 +2,12 @@
 
 public class Person
 {
+    // Primary key of the Person entity
     public int Id { get; set; }
+    // Name of the person, initialized to prevent null reference exceptions
     public string Name { get; set; } = string.Empty;
 
+    // Virtual collections of related records using lazy loading. Each ICollection<T> represents a one-to-many relationship.
     public virtual ICollection<BodyRecord> BodyRecords { get; set; } = new List<BodyRecord>();
     public virtual ICollection<Run> Runs { get; set; } = new List<Run>();
     public virtual ICollection<Workout> Workouts { get; set; } = new List<Workout>();
