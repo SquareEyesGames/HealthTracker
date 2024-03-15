@@ -6,4 +6,9 @@ public abstract class GeneralActivity
     // Nullable virtual back-reference to Person
     public virtual Person? Person { get; set; }
     public DateTime DateOfRecord { get; set; }
+    public TimeSpan TrainingTime { get; set; }
+    public int AverageHeartRate { get; set; }
+    public int MaxHeartRate { get; set; }
+    public int CaloriesBurned { get; set; }
+    public int SessionRating { get; set; }
 }

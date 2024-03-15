@@ -32,7 +32,7 @@ while(!exit)
    Console.WriteLine("4: Exit");
    Console.Write("Auswahl: ");
 
-   string choice = Console.ReadLine();
+   string? choice = Console.ReadLine();
 
    switch (choice)
    {

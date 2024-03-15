@@ -7,4 +7,5 @@ public class MentalRecord
     public virtual Person? Person { get; set; }
     public DateTime DateOfRecord { get; set; }
     public int StressLevel { get; set; }
+    public string Mood { get; set; } = string.Empty;
 }

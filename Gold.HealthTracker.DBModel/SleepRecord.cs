@@ -9,4 +9,6 @@ public class SleepRecord
     public DateTime DateOfRecord { get; set; }
     public DateTime Bedtime { get; set; }
     public DateTime WakeUpTime { get; set; }
+    public TimeSpan TimeAsleep { get; set; }
+    public int SleepQuality { get; set; }
 }
