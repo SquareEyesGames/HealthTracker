@@ -56,19 +56,78 @@ while(!exit)
 
 static void AddBodyRecord(Person person, HealthTrackerContext context)
 {
-   Console.Write("Gib das Datum der Messung ein (yyyy-mm-dd): ");
-   DateTime date = DateTime.Parse(Console.ReadLine());
+   DateTime date = PromptForDateTime("Gib das Datum der Messung ein (yyyy-mm-dd): ");
+   float weight = PromptForFloat("Gib das Gewicht ein: ");
+   float bmi = PromptForFloat("Gib den BMI ein: ");
+   float bodyFat = PromptForFloat("Gib den Körperfettanteil ein: ");
+   float fatlessBodyWeight = PromptForFloat("Gib das fettfreie Körpergewicht ein: ");
+   float subcutaneousBodyFat = PromptForFloat("Gib das subkutane Körperfett ein: ");
+   float visceralFat = PromptForFloat("Gib das viszerale Fett ein: ");
+   float bodyWater = PromptForFloat("Gib den Körperwasseranteil ein: ");
+   float skeletalMuscle = PromptForFloat("Gib die skelettale Muskelmasse ein: ");
+   float muscleMass = PromptForFloat("Gib die Muskelmasse ein: ");
+   float boneMass = PromptForFloat("Gib die Knochenmasse ein: ");
+   float metabolicRate = PromptForInt("Gib die metabolische Rate ein: ");
+   float metabolicAge = PromptForInt("Gib dein metabolische Alter ein: ");
 
-   Console.Write("Gib das Gewicht ein: ");
-   float weight = float.Parse(Console.ReadLine());
+   person.BodyRecords.Add(new BodyRecord
+   {
+      DateOfRecord = date,
+      Bodyweight = weight,
+      BMI = bmi,
+      BodyFat = bodyFat,
+      FatlessBodyWeight = fatlessBodyWeight,
+      SubcutaneousBodyFat = subcutaneousBodyFat,
+      VisceralFat = visceralFat,
+      BodyWater = bodyWater,
+      SkeletalMuscle = skeletalMuscle,
+      MuscleMass = muscleMass,
+      BoneMass = boneMass,
+      MetabolicRate = metabolicRate,
+      MetabolicAge = metabolicAge
+   });
 
-   Console.Write("Gib den Körperfettanteil ein: ");
-   float bodyFat = float.Parse(Console.ReadLine());
+        context.SaveChanges();
 
-   person.BodyRecords.Add(new BodyRecord { DateOfRecord = date, Bodyweight = weight, BodyFat = bodyFat });
-   context.SaveChanges();
+        Console.WriteLine("Körpermessung hinzugefügt.");
+}
 
-   Console.WriteLine("Körpermessung hinzugefügt.");
+static DateTime PromptForDateTime(string message)
+{
+    DateTime result;
+    Console.Write(message);
+    while (!DateTime.TryParse(Console.ReadLine(), out result))
+    {
+        Console.WriteLine("Ungültige Eingabe. Bitte versuche es erneut.");
+        Console.Write(message);
+    }
+    return result;
+}
+
+
+static float PromptForFloat(string message)
+{
+    float result;
+    Console.Write(message);
+    while (!float.TryParse(Console.ReadLine(), out result))
+    {
+        Console.WriteLine("Ungültige Eingabe. Bitte gib eine Zahl ein.");
+        Console.Write(message);
+    }
+    return result;
+}
+
+
+static int PromptForInt(string message)
+{
+    int result;
+    Console.Write(message);
+    while (!int.TryParse(Console.ReadLine(), out result))
+    {
+        Console.WriteLine("Ungültige Eingabe. Bitte gib eine Zahl ein.");
+        Console.Write(message);
+    }
+    return result;
 }
 
 static void AddRunRecord(Person person, HealthTrackerContext context)
