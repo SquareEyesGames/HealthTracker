@@ -7,7 +7,5 @@ public class Exercise
     // Nullable virtual back-reference to Workout, allowing navigation back to the associated workout
     public virtual Workout? Workout { get; set; }
     public string ExerciseName { get; set; } = string.Empty;
-    public int Sets { get; set; }
-    public int Repetitions { get; set; }
-    public float ResistanceWeight { get; set; }
+    public virtual ICollection<Set> Sets { get; set; } = new List<Set>();
 }
