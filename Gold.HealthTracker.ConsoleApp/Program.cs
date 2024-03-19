@@ -74,21 +74,21 @@ static void AddBodyRecord(Person person, HealthTrackerContext context)
 {
    // Prompt the user for each measurement, validating and parsing the input
    DateOnly dateOfRecord = PromptForDateOnly("Datum der Körpermessung (yyyy-mm-dd): ");
-   float weight = PromptForFloat("Gib das Gewicht ein: ");
-   float bmi = PromptForFloat("Gib den BMI ein: ");
-   float bodyFat = PromptForFloat("Gib den Körperfettanteil ein: ");
-   float fatlessBodyWeight = PromptForFloat("Gib das fettfreie Körpergewicht ein: ");
-   float subcutaneousBodyFat = PromptForFloat("Gib das subkutane Körperfett ein: ");
-   float visceralFat = PromptForFloat("Gib das viszerale Fett ein: ");
-   float bodyWater = PromptForFloat("Gib den Körperwasseranteil ein: ");
-   float skeletalMuscle = PromptForFloat("Gib die skelettale Muskelmasse ein: ");
-   float muscleMass = PromptForFloat("Gib die Muskelmasse ein: ");
-   float boneMass = PromptForFloat("Gib die Knochenmasse ein: ");
-   int metabolicRate = PromptForInt("Gib die metabolische Rate ein: ");
-   int metabolicAge = PromptForInt("Gib dein metabolische Alter ein: ");
+   float weight = PromptForFloat("Gib das Gewicht ein: ", 0f, 300f);
+   float bmi = PromptForFloat("Gib den BMI ein: ", 0f, 100f);
+   float bodyFat = PromptForFloat("Gib den Körperfettanteil ein: ", 0f, 100f);
+   float fatlessBodyWeight = PromptForFloat("Gib das fettfreie Körpergewicht ein: ", 0f, 100f);
+   float subcutaneousBodyFat = PromptForFloat("Gib das subkutane Körperfett ein: ", 0f, 100f);
+   float visceralFat = PromptForFloat("Gib das viszerale Fett ein: ", 0f, 100f);
+   float bodyWater = PromptForFloat("Gib den Körperwasseranteil ein: ", 0f, 100f);
+   float skeletalMuscle = PromptForFloat("Gib die skelettale Muskelmasse ein: ", 0f, 100f);
+   float muscleMass = PromptForFloat("Gib die Muskelmasse ein: ", 0f, 100f);
+   float boneMass = PromptForFloat("Gib die Knochenmasse ein: ", 0f, 100f);
+   int metabolicRate = PromptForInt("Gib deinen Grundumsatz ein: ", 0, 10000);
+   int metabolicAge = PromptForInt("Gib dein metabolische Alter ein: ", 0, 200);
 
    // Add the new BodyRecord to the person's collection and save changes to the database
-   BodyRecord bodyRecord = new BodyRecord
+   BodyRecord bodyRecord = new()
    {
       DateOfRecord = dateOfRecord,
       Bodyweight = weight,
@@ -115,18 +115,18 @@ static void AddRunRecord(Person person, HealthTrackerContext context)
    DateTime dateOfTraining = PromptForDateTime("Gib das Datum der Trainingseinheit ein (yyyy-mm-dd): ");
    string enduranceType = PromptForString("Gib den Ausdauertyp ein (z.B. Grundlagenausdauer, Kraftausdauer): ");
    TimeSpan trainingTime = PromptForTimeSpan("Gib die Dauer deiner Laufeinheit ein (HH:mm): ");
-   float distance = PromptForFloat("Gib die Distanz in km ein: ");
-   int averageHeartRate = PromptForInt("Gib deine durchschnittliche Herzfrequenz ein: ");
-   float averageSpeed = PromptForFloat("Gib deine durchschnittliche Geschwindigkeit in km/h ein: ");
-   int maxHeartRate = PromptForInt("Gib deine maximale Herzfrequenz ein: ");
-   int altitude = PromptForInt("Gib die erklommene Höhe in Metern ein: ");
-   int cadence = PromptForInt("Gib die Kadenz (Schritte pro Minute) ein: ");
-   int caloriesBurned = PromptForInt("Gib die verbrannten Kalorien ein: ");
+   float distance = PromptForFloat("Gib die Distanz in km ein: ", 0f, 1000f);
+   float averageSpeed = PromptForFloat("Gib deine durchschnittliche Geschwindigkeit in min/km ein: ", 0, 1000);
+   int averageHeartRate = PromptForInt("Gib deine durchschnittliche Herzfrequenz ein: ", 0, 250);
+   int maxHeartRate = PromptForInt("Gib deine maximale Herzfrequenz ein: ", 0, 250);
+   int altitude = PromptForInt("Gib die erklommene Höhe in Metern ein: ", 0, 10000);
+   int cadence = PromptForInt("Gib die Kadenz (Schritte pro Minute) ein: ", 0, 1000);
+   int caloriesBurned = PromptForInt("Gib die verbrannten Kalorien ein: ", 0, 100000);
    string weather = PromptForString("Beschreibe das Wetter während des Laufs: ");
    string runningShoes = PromptForString("Gib die Laufschuhe ein: ");
-   int sessionRating = PromptForInt("Bewerte die Trainingssession (1-10): ");
+   int sessionRating = PromptForInt("Bewerte die Trainingssession (1-10): ", 0, 10);
 
-   Run run = new Run
+   Run run = new()
    {
       DateOfRecord = dateOfTraining,
       TrainingTime = trainingTime,
@@ -153,12 +153,12 @@ static void AddWorkoutRecord(Person person, HealthTrackerContext context)
    DateTime dateOfTraining = PromptForDateTime("Gib das Datum der Trainingseinheit ein (yyyy-mm-dd): ");
    string trainingLocation = PromptForString("Gib den Trainingsort ein: ");
    TimeSpan trainingTime = PromptForTimeSpan("Gib die Trainingsdauer ein (HH:mm): ");
-   int averageHeartRate = PromptForInt("Gib die durchschnittliche Herzfrequenz ein: ");
-   int maxHeartRate = PromptForInt("Gib die maximale Herzfrequenz ein: ");
-   int caloriesBurned = PromptForInt("Gib die verbrannten Kalorien ein: ");
-   int sessionRating = PromptForInt("Bewerte die Trainingssession (1-10): ");
+   int averageHeartRate = PromptForInt("Gib die durchschnittliche Herzfrequenz ein: ", 0, 250);
+   int maxHeartRate = PromptForInt("Gib die maximale Herzfrequenz ein: ", 0, 250);
+   int caloriesBurned = PromptForInt("Gib die verbrannten Kalorien ein: ", 0, 100000);
+   int sessionRating = PromptForInt("Bewerte die Trainingssession (1-10): ", 0, 10);
    
-   Workout workout = new Workout 
+   Workout workout = new()
    { 
       DateOfRecord = dateOfTraining,
       TrainingLocation = trainingLocation,
@@ -173,17 +173,17 @@ static void AddWorkoutRecord(Person person, HealthTrackerContext context)
    while (addingExercises)
    {
       string exerciseName = PromptForString("Gib den Namen der Übung ein: ");
-      Exercise exercise = new Exercise { ExerciseName = exerciseName };
+      Exercise exercise = new() { ExerciseName = exerciseName };
       
       workout.Exercises.Add(exercise);
 
       bool addingSets = true;
       while (addingSets)
       {
-         int reps = PromptForInt("Anzahl der Wiederholungen: ");
-         float weight = PromptForFloat("Gewicht in kg: ");
+         float reps = PromptForFloat("Anzahl der Wiederholungen: ", 0f, 1000f);
+         float weight = PromptForFloat("Gewicht in kg: ", 0, 1000);
 
-         Set set = new Set { Repetitions = reps, Weight = weight };
+         Set set = new() { Repetitions = reps, Weight = weight };
          exercise.Sets.Add(set);
 
          string addAnotherSet = PromptForString("Möchtest du einen weiteren Satz hinzufügen? (j/n): ");
@@ -204,12 +204,12 @@ static void AddSportSessionRecord(Person person, HealthTrackerContext context)
    DateTime dateOfTraining = PromptForDateTime("Gib das Datum der Trainingseinheit ein (yyyy-mm-dd): ");
    string sport = PromptForString("Gib die Sportart ein: ");
    TimeSpan trainingTime = PromptForTimeSpan("Gib die Trainingsdauer ein (HH:mm): ");
-   int averageHeartRate = PromptForInt("Gib deine durchschnittliche Herzfrequenz ein: ");
-   int maxHeartRate = PromptForInt("Gib deine maximale Herzfrequenz ein: ");
-   int caloriesBurned = PromptForInt("Gib die verbrannten Kalorien ein: ");
-   int sessionRating = PromptForInt("Bewerte die Trainingssession (1-10): ");
+   int averageHeartRate = PromptForInt("Gib deine durchschnittliche Herzfrequenz ein: ", 0, 250);
+   int maxHeartRate = PromptForInt("Gib deine maximale Herzfrequenz ein: ", 0, 250);
+   int caloriesBurned = PromptForInt("Gib die verbrannten Kalorien ein: ", 0, 100000);
+   int sessionRating = PromptForInt("Bewerte die Trainingssession (1-10): ", 0, 10);
 
-   SportSession sportSession = new SportSession
+   SportSession sportSession = new()
    {
       DateOfRecord = dateOfTraining,
       Sport = sport,
@@ -230,11 +230,11 @@ static void AddSleepRecord(Person person, HealthTrackerContext context)
    DateOnly dateOfRecord = PromptForDateOnly("Gib das Datum der Messung ein (yyyy-mm-dd): ");
    DateTime bedtime = PromptForDateTime("Gib die Bettzeit ein (yyyy-mm-dd HH:mm): ");
    DateTime wakeUpTime = PromptForDateTime("Gib die Aufwachzeit ein (yyyy-mm-dd HH:mm): ");
-   int sleepQuality = PromptForInt("Bewerte die Schlafqualität (1-10): ");
+   int sleepQuality = PromptForInt("Bewerte die Schlafqualität (1-10): ", 0, 10);
 
    TimeSpan timeAsleep = wakeUpTime - bedtime;
 
-   SleepRecord sleepRecord = new SleepRecord
+   SleepRecord sleepRecord = new()
    {
       DateOfRecord = dateOfRecord,
       Bedtime = bedtime,
@@ -251,9 +251,9 @@ static void AddSleepRecord(Person person, HealthTrackerContext context)
 static void AddNutritionRecord (Person person, HealthTrackerContext context)
 {
    DateOnly dateOfRecord = PromptForDateOnly("Gebe das Datum an für, den das Ernährungsprotokoll erstellt werden soll (yyyy-mm-dd)");
-   int calorieIntake = PromptForInt("Füge deine Gesamtkalorienzufuhr hinzu: ");
+   int calorieIntake = PromptForInt("Füge deine Gesamtkalorienzufuhr hinzu: ", 0, 100000);
 
-   NutritionRecord nutritionRecord = new NutritionRecord
+   NutritionRecord nutritionRecord = new()
    {
       DateOfRecord = dateOfRecord,
       CalorieIntake = calorieIntake
@@ -267,7 +267,7 @@ static void AddNutritionRecord (Person person, HealthTrackerContext context)
 static void AddMentalRecord (Person person, HealthTrackerContext context)
 {
    DateOnly dateOfRecord = PromptForDateOnly("Gebe das Datum an für, den die Psychoanamnese erstellt werden soll (yyyy-mm-dd)");
-   int stressLevel = PromptForInt("Bewerte dein Stresslevel (1-10)");
+   int stressLevel = PromptForInt("Bewerte dein Stresslevel (1-10)", 0, 10);
    string mood = PromptForString("Wie fühlst du dich?");
 
    MentalRecord mentalRecord = new()
@@ -296,24 +296,48 @@ static DateTime PromptForDateTime(string message)
 }
 
 // Helper methods for prompting and validating DateOnly type user input
-static DateOnly PromptForDateOnly(string message)
+static DateOnly PromptForDateOnly(string message, DateOnly minDate = default, DateOnly maxDate = default)
 {
-   DateOnly result;
-   Console.WriteLine(message);
-   while(!DateOnly.TryParse(Console.ReadLine(), out result))
-   {
-      Console.WriteLine("Ungültige Eingabe. Bitte versuche es erneut.");
-      Console.WriteLine(message);
-   }
-   return result;
+    // Sets minValue if not declared
+    if (minDate == default)
+    {
+        minDate = new DateOnly(1900, 1, 1); // No dates before 1900
+    }
+
+    // Sets maxValue if not declared
+    if (maxDate == default)
+    {
+        maxDate = DateOnly.FromDateTime(DateTime.Today); // No furute dates
+    }
+
+    DateOnly result;
+    Console.Write(message);
+    while (!DateOnly.TryParse(Console.ReadLine(), out result) || result < minDate || result > maxDate)
+    {
+        if (result < minDate)
+        {
+            Console.WriteLine($"Ungültige Eingabe. Das Datum muss nach dem {minDate:yyyy-MM-dd} liegen.");
+        }
+        else if (result > maxDate)
+        {
+            Console.WriteLine($"Ungültige Eingabe. Das Datum muss vor dem {maxDate:yyyy-MM-dd} liegen.");
+        }
+        else
+        {
+            Console.WriteLine("Ungültige Eingabe. Bitte versuche es erneut.");
+        }
+        Console.Write(message);
+    }
+    return result;
 }
 
+
 // Helper methods for prompting and validating float type user input
-static float PromptForFloat(string message)
+static float PromptForFloat(string message, float minValue, float maxValue)
 {
    float result;
    Console.Write(message);
-   while (!float.TryParse(Console.ReadLine(), out result))
+   while (!float.TryParse(Console.ReadLine(), out result) || result < minValue || result > maxValue)
    {
       Console.WriteLine("Ungültige Eingabe. Bitte gib eine Zahl ein.");
       Console.Write(message);
@@ -322,11 +346,11 @@ static float PromptForFloat(string message)
 }
 
 // Helper methods for prompting and validating int type user input
-static int PromptForInt(string message)
+static int PromptForInt(string message, int minValue, int maxValue)
 {
    int result;
    Console.Write(message);
-   while (!int.TryParse(Console.ReadLine(), out result))
+   while (!int.TryParse(Console.ReadLine(), out result) || result < minValue || result > maxValue)
    {
       Console.WriteLine("Ungültige Eingabe. Bitte gib eine Zahl ein.");
       Console.Write(message);
