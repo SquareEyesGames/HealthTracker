@@ -29,9 +29,11 @@ while(!exit)
    Console.WriteLine("1: Körpermessung");
    Console.WriteLine("2: Lauftraining");
    Console.WriteLine("3: Krafttraining");
-   Console.WriteLine("4: Schlafmessung");
-   Console.WriteLine("5: Exit");
-   Console.Write("Auswahl: ");
+   Console.WriteLine("4: Allgemeines Training");
+   Console.WriteLine("5: Schlafprotokoll");
+   Console.WriteLine("6: Ernährungsprotokoll");
+   Console.WriteLine("7: Psychoanamnese");
+   Console.WriteLine("8: Exit");
 
    string? choice = Console.ReadLine();
 
@@ -47,9 +49,18 @@ while(!exit)
          AddWorkoutRecord(existingPerson, context);
          break;
       case "4":
-         AddSleepRecord(existingPerson, context);
+         AddSportSessionRecord(existingPerson, context);
          break;
       case "5":
+         AddSleepRecord(existingPerson, context);
+         break;
+      case "6":
+         AddNutritionRecord(existingPerson, context);
+         break;
+      case "7":
+         AddMentalRecord(existingPerson, context);
+         break;
+      case "8":
          exit = true;
          break;
       default:
@@ -62,7 +73,7 @@ while(!exit)
 static void AddBodyRecord(Person person, HealthTrackerContext context)
 {
    // Prompt the user for each measurement, validating and parsing the input
-   DateTime date = PromptForDateTime("Gib das Datum der Messung ein (yyyy-mm-dd): ");
+   DateOnly dateOfRecord = PromptForDateOnly("Datum der Körpermessung (yyyy-mm-dd): ");
    float weight = PromptForFloat("Gib das Gewicht ein: ");
    float bmi = PromptForFloat("Gib den BMI ein: ");
    float bodyFat = PromptForFloat("Gib den Körperfettanteil ein: ");
@@ -77,9 +88,9 @@ static void AddBodyRecord(Person person, HealthTrackerContext context)
    int metabolicAge = PromptForInt("Gib dein metabolische Alter ein: ");
 
    // Add the new BodyRecord to the person's collection and save changes to the database
-   person.BodyRecords.Add(new BodyRecord
+   BodyRecord bodyRecord = new BodyRecord
    {
-      DateOfRecord = date,
+      DateOfRecord = dateOfRecord,
       Bodyweight = weight,
       BMI = bmi,
       BodyFat = bodyFat,
@@ -92,26 +103,37 @@ static void AddBodyRecord(Person person, HealthTrackerContext context)
       BoneMass = boneMass,
       MetabolicRate = metabolicRate,
       MetabolicAge = metabolicAge
-   });
+   };
 
+      person.BodyRecords.Add(bodyRecord);
       context.SaveChanges();
-
       Console.WriteLine("Körpermessung hinzugefügt.");
 }
 
 static void AddRunRecord(Person person, HealthTrackerContext context)
 {
+   DateTime dateOfTraining = PromptForDateTime("Gib das Datum der Trainingseinheit ein (yyyy-mm-dd): ");
    string enduranceType = PromptForString("Gib den Ausdauertyp ein (z.B. Grundlagenausdauer, Kraftausdauer): ");
+   TimeSpan trainingTime = PromptForTimeSpan("Gib die Dauer deiner Laufeinheit ein (HH:mm): ");
    float distance = PromptForFloat("Gib die Distanz in km ein: ");
-   float averageSpeed = PromptForFloat("Gib die durchschnittliche Geschwindigkeit in km/h ein: ");
+   int averageHeartRate = PromptForInt("Gib deine durchschnittliche Herzfrequenz ein: ");
+   float averageSpeed = PromptForFloat("Gib deine durchschnittliche Geschwindigkeit in km/h ein: ");
+   int maxHeartRate = PromptForInt("Gib deine maximale Herzfrequenz ein: ");
    int altitude = PromptForInt("Gib die erklommene Höhe in Metern ein: ");
    int cadence = PromptForInt("Gib die Kadenz (Schritte pro Minute) ein: ");
+   int caloriesBurned = PromptForInt("Gib die verbrannten Kalorien ein: ");
    string weather = PromptForString("Beschreibe das Wetter während des Laufs: ");
    string runningShoes = PromptForString("Gib die Laufschuhe ein: ");
+   int sessionRating = PromptForInt("Bewerte die Trainingssession (1-10): ");
 
-   person.Runs.Add(new Run
+   Run run = new Run
    {
-      DateOfRecord = DateTime.Now, // Für einheitliche Datumsangaben nutzen wir hier das aktuelle Datum
+      DateOfRecord = dateOfTraining,
+      TrainingTime = trainingTime,
+      AverageHeartRate = averageHeartRate,
+      MaxHeartRate = maxHeartRate,
+      CaloriesBurned = caloriesBurned,
+      SessionRating = sessionRating,
       EnduranceType = enduranceType,
       Distance = distance,
       AverageSpeed = averageSpeed,
@@ -119,70 +141,146 @@ static void AddRunRecord(Person person, HealthTrackerContext context)
       Cadence = cadence,
       Weather = weather,
       RunningShoes = runningShoes
-   });
+   };
 
+   person.Runs.Add(run);
    context.SaveChanges();
    Console.WriteLine("Lauftraining hinzugefügt.");
 }
 
 static void AddWorkoutRecord(Person person, HealthTrackerContext context)
 {
-    string trainingLocation = PromptForString("Gib den Trainingsort ein: ");
-    var workout = new Workout { TrainingLocation = trainingLocation, DateOfRecord = DateTime.Now };
+   DateTime dateOfTraining = PromptForDateTime("Gib das Datum der Trainingseinheit ein (yyyy-mm-dd): ");
+   string trainingLocation = PromptForString("Gib den Trainingsort ein: ");
+   TimeSpan trainingTime = PromptForTimeSpan("Gib die Trainingsdauer ein (HH:mm): ");
+   int averageHeartRate = PromptForInt("Gib die durchschnittliche Herzfrequenz ein: ");
+   int maxHeartRate = PromptForInt("Gib die maximale Herzfrequenz ein: ");
+   int caloriesBurned = PromptForInt("Gib die verbrannten Kalorien ein: ");
+   int sessionRating = PromptForInt("Bewerte die Trainingssession (1-10): ");
+   
+   Workout workout = new Workout 
+   { 
+      DateOfRecord = dateOfTraining,
+      TrainingLocation = trainingLocation,
+      TrainingTime = trainingTime,
+      AverageHeartRate = averageHeartRate,
+      MaxHeartRate = maxHeartRate,
+      CaloriesBurned = caloriesBurned,
+      SessionRating = sessionRating
+   };
 
-    bool addingExercises = true;
-    while (addingExercises)
-    {
-        string exerciseName = PromptForString("Gib den Namen der Übung ein: ");
-        Exercise exercise = new Exercise { ExerciseName = exerciseName };
-        
-        workout.Exercises.Add(exercise);
+   bool addingExercises = true;
+   while (addingExercises)
+   {
+      string exerciseName = PromptForString("Gib den Namen der Übung ein: ");
+      Exercise exercise = new Exercise { ExerciseName = exerciseName };
+      
+      workout.Exercises.Add(exercise);
 
-        bool addingSets = true;
-        while (addingSets)
-        {
-            int reps = PromptForInt("Anzahl der Wiederholungen: ");
-            float weight = PromptForFloat("Gewicht in kg: ");
+      bool addingSets = true;
+      while (addingSets)
+      {
+         int reps = PromptForInt("Anzahl der Wiederholungen: ");
+         float weight = PromptForFloat("Gewicht in kg: ");
 
-            Set set = new Set { Repetitions = reps, Weight = weight };
-            exercise.Sets.Add(set);
+         Set set = new Set { Repetitions = reps, Weight = weight };
+         exercise.Sets.Add(set);
 
-            string addAnotherSet = PromptForString("Möchtest du einen weiteren Satz hinzufügen? (j/n): ");
-            addingSets = addAnotherSet.ToLower() == "j";
-        }
+         string addAnotherSet = PromptForString("Möchtest du einen weiteren Satz hinzufügen? (j/n): ");
+         addingSets = addAnotherSet.ToLower() == "j";
+      }
 
-        string addAnotherExercise = PromptForString("Möchtest du eine weitere Übung hinzufügen? (j/n): ");
-        addingExercises = addAnotherExercise.ToLower() == "j";
-    }
+      string addAnotherExercise = PromptForString("Möchtest du eine weitere Übung hinzufügen? (j/n): ");
+      addingExercises = addAnotherExercise.ToLower() == "j";
+   }
 
-    person.Workouts.Add(workout);
-    context.SaveChanges();
-    Console.WriteLine("Workout-Datensatz hinzugefügt.");
+   person.Workouts.Add(workout);
+   context.SaveChanges();
+   Console.WriteLine("Workout hinzugefügt.");
+}
+
+static void AddSportSessionRecord(Person person, HealthTrackerContext context)
+{
+   DateTime dateOfTraining = PromptForDateTime("Gib das Datum der Trainingseinheit ein (yyyy-mm-dd): ");
+   string sport = PromptForString("Gib die Sportart ein: ");
+   TimeSpan trainingTime = PromptForTimeSpan("Gib die Trainingsdauer ein (HH:mm): ");
+   int averageHeartRate = PromptForInt("Gib deine durchschnittliche Herzfrequenz ein: ");
+   int maxHeartRate = PromptForInt("Gib deine maximale Herzfrequenz ein: ");
+   int caloriesBurned = PromptForInt("Gib die verbrannten Kalorien ein: ");
+   int sessionRating = PromptForInt("Bewerte die Trainingssession (1-10): ");
+
+   SportSession sportSession = new SportSession
+   {
+      DateOfRecord = dateOfTraining,
+      Sport = sport,
+      TrainingTime = trainingTime,
+      AverageHeartRate = averageHeartRate,
+      MaxHeartRate = maxHeartRate,
+      CaloriesBurned = caloriesBurned,
+      SessionRating = sessionRating,
+   };
+
+   person.SportSessions.Add(sportSession);
+   context.SaveChanges();
+   Console.WriteLine("Sportsession hinzugefügt.");
 }
 
 static void AddSleepRecord(Person person, HealthTrackerContext context)
 {
-   DateTime dateOfRecord = PromptForDateTime("Gib das Datum der Messung ein (yyyy-mm-dd): ");
+   DateOnly dateOfRecord = PromptForDateOnly("Gib das Datum der Messung ein (yyyy-mm-dd): ");
    DateTime bedtime = PromptForDateTime("Gib die Bettzeit ein (yyyy-mm-dd HH:mm): ");
    DateTime wakeUpTime = PromptForDateTime("Gib die Aufwachzeit ein (yyyy-mm-dd HH:mm): ");
    int sleepQuality = PromptForInt("Bewerte die Schlafqualität (1-10): ");
 
-   // Berechnung der tatsächlichen Schlafdauer
    TimeSpan timeAsleep = wakeUpTime - bedtime;
 
-   person.SleepRecords.Add(new SleepRecord
+   SleepRecord sleepRecord = new SleepRecord
    {
       DateOfRecord = dateOfRecord,
       Bedtime = bedtime,
       WakeUpTime = wakeUpTime,
       TimeAsleep = timeAsleep,
       SleepQuality = sleepQuality
-   });
+   };
 
+   person.SleepRecords.Add(sleepRecord);
    context.SaveChanges();
-   Console.WriteLine("Schlafmessung hinzugefügt.");
+   Console.WriteLine("Schlafprotokoll hinzugefügt.");
 }
 
+static void AddNutritionRecord (Person person, HealthTrackerContext context)
+{
+   DateOnly dateOfRecord = PromptForDateOnly("Gebe das Datum an für, den das Ernährungsprotokoll erstellt werden soll (yyyy-mm-dd)");
+   int calorieIntake = PromptForInt("Füge deine Gesamtkalorienzufuhr hinzu: ");
+
+   NutritionRecord nutritionRecord = new NutritionRecord
+   {
+      DateOfRecord = dateOfRecord,
+      CalorieIntake = calorieIntake
+   };
+
+   person.NutritionRecords.Add(nutritionRecord);
+   context.SaveChanges();
+   Console.WriteLine("Ernährungsprotokoll hinzugefügt.");
+}
+
+static void AddMentalRecord (Person person, HealthTrackerContext context)
+{
+   DateOnly dateOfRecord = PromptForDateOnly("Gebe das Datum an für, den die Psychoanamnese erstellt werden soll (yyyy-mm-dd)");
+   int stressLevel = PromptForInt("Bewerte dein Stresslevel (1-10)");
+   string mood = PromptForString("Wie fühlst du dich?");
+
+   MentalRecord mentalRecord = new()
+   {
+      DateOfRecord = dateOfRecord,
+      StressLevel = stressLevel,
+      Mood = mood
+   };
+
+   person.MentalRecords.Add(mentalRecord);
+   context.SaveChanges();
+   Console.WriteLine("Psychoanamnese hinzugefügt");
+}
 
 // Helper methods for prompting and validating DateTime type user input
 static DateTime PromptForDateTime(string message)
@@ -193,6 +291,19 @@ static DateTime PromptForDateTime(string message)
    {
       Console.WriteLine("Ungültige Eingabe. Bitte versuche es erneut.");
       Console.Write(message);
+   }
+   return result;
+}
+
+// Helper methods for prompting and validating DateOnly type user input
+static DateOnly PromptForDateOnly(string message)
+{
+   DateOnly result;
+   Console.WriteLine(message);
+   while(!DateOnly.TryParse(Console.ReadLine(), out result))
+   {
+      Console.WriteLine("Ungültige Eingabe. Bitte versuche es erneut.");
+      Console.WriteLine(message);
    }
    return result;
 }
@@ -234,6 +345,19 @@ static string PromptForString(string message)
    }
    return input;
 }
+
+static TimeSpan PromptForTimeSpan(string message)
+{
+   Console.Write(message);
+   TimeSpan result;
+   while (!TimeSpan.TryParseExact(Console.ReadLine(), "hh\\:mm", null, out result))
+   {
+      Console.WriteLine("Ungültige Eingabe. Bitte im Format HH:mm eingeben.");
+      Console.Write(message);
+   }
+   return result;
+}
+
 
 
 // Adds a new BodyRecord to "Thomas" and saves changes to the database
