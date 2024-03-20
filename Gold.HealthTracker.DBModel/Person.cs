@@ -1,11 +1,21 @@
-﻿namespace Gold.HealthTracker.DBModel;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Gold.HealthTracker.DBModel;
 
 public class Person
 {
     // Primary key of the Person entity
+    [Key]
     public int Id { get; set; }
-    // Name of the person, initialized to prevent null reference exceptions
-    public string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Name of the person, initialized to prevent null reference exceptions
+    /// </summary>
+    [Required]
+    [StringLength(50)]
+    [Column("User Name")]
+    public string? Name { get; set; }
 
     // Virtual collections of related records using lazy loading. Each ICollection<T> represents a one-to-many relationship.
     public virtual ICollection<BodyRecord> BodyRecords { get; set; } = new List<BodyRecord>();
