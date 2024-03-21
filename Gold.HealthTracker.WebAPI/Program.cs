@@ -1,3 +1,6 @@
+using Gold.HealthTracker.DBModel;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,7 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+builder.Services.AddDbContext<HealthTrackerContext>(o =>
+    o.UseSqlServer("Name=ConnectionStrings:HealthTrackerDB")
+);
 
 var app = builder.Build();
 

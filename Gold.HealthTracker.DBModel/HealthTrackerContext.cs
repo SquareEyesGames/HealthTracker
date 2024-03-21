@@ -15,11 +15,22 @@ public class HealthTrackerContext : DbContext
     public DbSet<SleepRecord> SleepRecords => Set<SleepRecord>();
     public DbSet<MentalRecord> MentalRecords => Set<MentalRecord>();
 
+    public HealthTrackerContext()
+        : base()
+    {
+        
+    }
+
+    public HealthTrackerContext(DbContextOptions options)
+        : base(options)
+    {
+        
+    }
+
     // Configures the DbContext with SQL Server and enables lazy loading proxies.
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS01;Database=HealthTracker;Trusted_Connection=True;TrustServerCertificate=True;");
         optionsBuilder.UseLazyLoadingProxies();     // Enables lazy loading for virtual navigation properties
     }
 }

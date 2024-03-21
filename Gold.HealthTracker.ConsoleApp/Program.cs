@@ -2,7 +2,9 @@
 using Gold.HealthTracker.DBModel;
 using Microsoft.EntityFrameworkCore;
 
-HealthTrackerContext context = new();
+var dbOptions = new DbContextOptionsBuilder<HealthTrackerContext>();
+dbOptions.UseSqlServer("Server=localhost\\SQLEXPRESS01;Database=HealthTracker;Trusted_Connection=True;TrustServerCertificate=True;");
+HealthTrackerContext context = new(dbOptions.Options);
 DataEntry dataEntry = new(context);
 
 // Ensures the database is created based on the current model
