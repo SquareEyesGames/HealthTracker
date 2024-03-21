@@ -96,7 +96,6 @@ if(existingPerson == null)
       DateOfRecord = new DateOnly(2024, 01, 02),
       Bedtime = new DateTime(2024, 01, 01, 23, 00, 00),
       WakeUpTime = new DateTime(2024, 01, 02, 07, 00, 00),
-      TimeAsleep = new TimeSpan(08,00,00),
       SleepQuality = 8
    });
    existingPerson.NutritionRecords.Add(new NutritionRecord

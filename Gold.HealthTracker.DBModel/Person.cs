@@ -14,8 +14,7 @@ public class Person
     /// </summary>
     [Required]
     [StringLength(50)]
-    [Column("User Name")]
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     // Virtual collections of related records using lazy loading. Each ICollection<T> represents a one-to-many relationship.
     public virtual ICollection<BodyRecord> BodyRecords { get; set; } = new List<BodyRecord>();

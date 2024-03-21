@@ -59,7 +59,7 @@ public void AddRun(Person person)
    string enduranceType = userInput.PromptForString("Gib den Ausdauertyp ein (z.B. Grundlagenausdauer, Kraftausdauer): ");
    TimeSpan trainingTime = userInput.PromptForTimeSpan("Gib die Dauer deiner Laufeinheit ein (HH:mm): ");
    float distance = userInput.PromptForFloat("Gib die Distanz in km ein: ", 0f, 1000f);
-   float averageSpeed = userInput.PromptForFloat("Gib deine durchschnittliche Geschwindigkeit in min/km ein: ", 0, 1000);
+   float averageSpeed = userInput.PromptForFloat("Gib deine durchschnittliche Geschwindigkeit in min/km ein: ", 0, 1000f);
    int averageHeartRate = userInput.PromptForInt("Gib deine durchschnittliche Herzfrequenz ein: ", 0, 250);
    int maxHeartRate = userInput.PromptForInt("Gib deine maximale Herzfrequenz ein: ", 0, 250);
    int altitude = userInput.PromptForInt("Gib die erklommene Höhe in Metern ein: ", 0, 10000);
@@ -182,7 +182,6 @@ public void AddSleepRecord(Person person)
       DateOfRecord = dateOfRecord,
       Bedtime = bedtime,
       WakeUpTime = wakeUpTime,
-      TimeAsleep = timeAsleep,
       SleepQuality = sleepQuality
    };
 
