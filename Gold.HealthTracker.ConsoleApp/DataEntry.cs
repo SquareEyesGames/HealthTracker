@@ -17,7 +17,7 @@ public void AddBodyRecord(Person person)
 {
    // Prompt the user for each measurement, validating and parsing the input
    DateOnly dateOfRecord = userInput.PromptForDateOnly("Datum der Körpermessung (yyyy-mm-dd): ");
-   float weight = userInput.PromptForFloat("Gib das Gewicht ein: ", 0f, 300f);
+   float weight = userInput.PromptForFloat("Gib das Gewicht ein: ", 0f, 400f);
    float bmi = userInput.PromptForFloat("Gib den BMI ein: ", 0f, 100f);
    float bodyFat = userInput.PromptForFloat("Gib den Körperfettanteil ein: ", 0f, 100f);
    float fatlessBodyWeight = userInput.PromptForFloat("Gib das fettfreie Körpergewicht ein: ", 0f, 100f);
