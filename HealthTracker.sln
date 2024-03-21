@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gold.HealthTracker.DBModel"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gold.HealthTracker.ConsoleApp", "Gold.HealthTracker.ConsoleApp\Gold.HealthTracker.ConsoleApp.csproj", "{9249FD72-DF79-4DF3-988A-ABAC9A0EC46A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gold.HealthTracker.WebAPI", "Gold.HealthTracker.WebAPI\Gold.HealthTracker.WebAPI.csproj", "{514F2A73-EFAD-4629-B5B1-CAA1E3619EC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{9249FD72-DF79-4DF3-988A-ABAC9A0EC46A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9249FD72-DF79-4DF3-988A-ABAC9A0EC46A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9249FD72-DF79-4DF3-988A-ABAC9A0EC46A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{514F2A73-EFAD-4629-B5B1-CAA1E3619EC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{514F2A73-EFAD-4629-B5B1-CAA1E3619EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{514F2A73-EFAD-4629-B5B1-CAA1E3619EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{514F2A73-EFAD-4629-B5B1-CAA1E3619EC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
