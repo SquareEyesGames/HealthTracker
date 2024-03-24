@@ -3,20 +3,20 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Fügt die Controller-Unterstützung hinzu
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Konfiguriert Swagger/OpenAPI für die API-Dokumentation und Interaktion
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Konfiguriert den Datenbankkontext mit der Verbindungszeichenfolge aus der appsettings.json
 builder.Services.AddDbContext<HealthTrackerContext>(o =>
     o.UseSqlServer("Name=ConnectionStrings:HealthTrackerDB")
 );
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configures the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -27,6 +27,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+// Mapt Controller-Endpunkte
 app.MapControllers();
 
 app.Run();
