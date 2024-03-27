@@ -8,14 +8,14 @@ using Microsoft.Identity.Client;
 
 namespace Gold.HealthTracker.WebAPI;
 
-// Markiert die Klasse als API-Controller und definiert die Basisroute
+// Marks this class as an API controller with a route base of 'controller' name (Person in this case)
 [ApiController]
 [Route("[controller]")]
 public class PersonController : ControllerBase
 {
     private readonly HealthTrackerContext _context;
 
-    // Konstruktor mit Dependency Injection für den Datenbankkontext
+    // Constructor with Dependency Injection for the database context
     public PersonController(HealthTrackerContext context)
     {
         _context = context;
@@ -23,42 +23,50 @@ public class PersonController : ControllerBase
 
 
 
-    // HTTP GET-Methode, um alle Personen abzurufen
+    /// <summary>
+    /// HTTP GET method to retrieve all persons
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(PersonDTO))]
     [ProducesResponseType(404)]
     public IEnumerable<PersonDTO?> GetPersons()
     {
+        // Checks if the Person set is null (which should never be true in a properly configured context)
         if(_context.BodyRecords == null)
             return (IEnumerable<PersonDTO?>)NotFound();
 
-        // Abfrage aller Personen aus der Datenbank und Umwandlung in PersonDTOs
+        // Queries all persons from the database and converts them to PersonDTOs
         return _context.Persons
-            .Select(p =>
-                new PersonDTO()
-                {
-                    Id = p.Id,
-                    Name = p.Name
-                });
+            .Select(p => new PersonDTO()
+            {
+                Id = p.Id,
+                Name = p.Name
+            });
     }
 
 
 
-    // HTTP GET-Methode mit ID-Parameter, um eine spezifische Person abzurufen
+    /// <summary>
+    /// HTTP GET method with an 'id' parameter to retrieve a specific Person by their ID
+    /// </summary>
+    /// <param name="id">PrimaryKey of the Person</param>
+    /// <returns></returns>
     [HttpGet("{id}")]
     [ProducesResponseType(200, Type = typeof(PersonDTO))]
     [ProducesResponseType(404)]
     public async Task<ActionResult> GetPerson(int id)
     {
-        // Sucht eine Person mit der gegebenen ID
+        // Searches for a person using the given ID
         Person? foundPerson = await _context.Persons.FindAsync(id);
 
+        // If no person is found, returns a 404 Not Found status
         if(foundPerson == null)
         {
             return NotFound();
         }
 
-        // Gibt die gefundene Person als DTO zurück
+        // Returns the found person as a DTO
         return Ok(new PersonDTO()
         {
             Id = foundPerson.Id,
@@ -68,12 +76,17 @@ public class PersonController : ControllerBase
 
 
 
-    // HTTP POST-Methode, um eine neue Person zu erstellen
+    /// <summary>
+    /// HTTP POST method to create a new person
+    /// </summary>
+    /// <param name="newPersonDTO">Creates a new PersonDTO</param>
+    /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(201, Type = typeof(int))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> CreatePerson(CreatePersonDTO newPersonDTO)
     {
+        // Checks model state for any validation errors
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -83,55 +96,69 @@ public class PersonController : ControllerBase
             Name = newPersonDTO.Name
         };
 
-        // Fügt eine neue Person zur Datenbank hinzu
+        // Adds the new person to the database
         await _context.Persons.AddAsync(newPerson);
-        
-        // Speichert die Änderungen in der Datenbank
+
+        // Saves changes to the database
         await _context.SaveChangesAsync();
 
+        // Returns a 201 Created status with the ID of the newly created person
         return CreatedAtAction(nameof(GetPerson), new {id = newPerson.Id}, newPerson.Id);
     }
 
 
 
-    // HTTP PUT-Methode, um eine bestehende Person zu aktualisieren
+    /// <summary>
+    /// HTTP PUT method to update an existing person
+    /// </summary>
+    /// <param name="id">PrimaryKey of the Person</param>
+    /// <param name="personDTO">Creates a new PersonDTO</param>
+    /// <returns></returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdatePerson(int id, CreatePersonDTO personDTO)
     {
-        // Sucht die zu aktualisierende Person
-        var personToUpdate = await _context.Persons.FindAsync(id);
+        // Finds the person to update
+        Person? personToUpdate = await _context.Persons.FindAsync(id);
         if (personToUpdate == null)
         {
             return NotFound($"Keine Person mit der ID {id} gefunden.");
         }
 
-        // Aktualisiert die Daten der Person
+        // Updates person data
         personToUpdate.Name = personDTO.Name;
-        // Füge hier weitere Zuweisungen hinzu, falls weitere Felder aktualisiert werden sollen
 
         try
         {
-            // Speichert die Änderungen in der Datenbank
+            // Attempts to save changes to the database. This includes updates made to the entity being modified.
             await _context.SaveChangesAsync();
         }
+        // Catches exceptions that are thrown when there is a concurrency conflict. Concurrency conflicts occur when an entity has been changed in the database after it was loaded into memory.
         catch (DbUpdateConcurrencyException)
         {
+            // If the Person with the specified ID does not exist, it returns a NotFound result (person might have been deleted between the time it was fetched and the attempt to update it)
             if (!PersonExists(id))
             {
                 return NotFound();
             }
+            // If the person exists but another type of concurrency conflict has occurred...
             else
-            {
+            {   
+                // ...rethrow the exception. This allows the exception to be handled by the framework or higher-level exception handlers.
                 throw;
             }
         }
 
-        // Gibt 204 No Content zurück, um den Erfolg der Operation zu signalisieren
+        // Returns a 204 No Content status to indicate successful update without returning data
         return NoContent();
     }
 
+    /// <summary>
+    /// Checks if a specific person exists in the database
+    /// </summary>
+    /// <param name="id">PrimaryKey of the Person</param>
+    /// <returns></returns>
     private bool PersonExists(int id)
     {
         return _context.Persons.Any(e => e.Id == id);
@@ -139,17 +166,21 @@ public class PersonController : ControllerBase
 
 
 
-    // HTTP DELETE-Methode, um eine Person zu löschen
+    /// <summary>
+    /// HTTP DELETE method to remove a person
+    /// </summary>
+    /// <param name="id">PrimaryKey of the person</param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeletePerson(int id)
     {
-        // Sucht die Person, die gelöscht werden soll
+        // Finds the person to be deleted
         Person? personToDelete = await _context.Persons.FindAsync(id);
 
-        // Wenn die Person nicht existiert, gibt 404 zurück
+        // If no person is found, returns a 404 Not Found status
         if(personToDelete == null) 
         {
             return NotFound();
@@ -157,16 +188,16 @@ public class PersonController : ControllerBase
 
         try
         {
-            // Entfernt die Person aus der Datenbank & speichert Änderung in der Datenbank
+            // Removes the person from the database and saves changes
             _context.Persons.Remove(personToDelete);
             await _context.SaveChangesAsync();
 
-            // Gibt 204 No Content zurück, um den Erfolg ohne Datenrückgabe zu signalisieren
+            // Returns a 204 NoContent status to indicate successful deletion without returning data
             return NoContent();
         }
         catch
         {
-            // Gibt 400 Bad Request zurück
+            // If an exception occurs, returns a 400 Bad Request status
             return BadRequest("Die Anfrage konnte nicht verarbeitet werden.");
         }
     }

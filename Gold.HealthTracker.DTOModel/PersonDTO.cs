@@ -13,5 +13,4 @@ public class PersonDTO
 public class CreatePersonDTO
 {
     public string Name { get; set; } = string.Empty;
-    
 }
