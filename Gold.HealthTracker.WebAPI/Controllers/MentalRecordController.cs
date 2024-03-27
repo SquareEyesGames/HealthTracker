@@ -37,7 +37,7 @@ public class MentalRecordController : ControllerBase
             {
                 Id = MentalRecord.Id,
                 PersonId = MentalRecord.Person == null ? 0 : MentalRecord.Person.Id,
-                DateOfRecord = MentalRecord.DateOfRecord,
+                DateOfRecord = MentalRecord.DateOfRecord.ToDateTime(TimeOnly.MinValue),
                 StressLevel = MentalRecord.StressLevel,
                 Mood = MentalRecord.Mood
             });
@@ -67,7 +67,7 @@ public class MentalRecordController : ControllerBase
         {
             Id = foundMentalRecord.Id,
             PersonId = foundMentalRecord.Person?.Id ?? 0,
-            DateOfRecord = foundMentalRecord.DateOfRecord,
+            DateOfRecord = foundMentalRecord.DateOfRecord.ToDateTime(TimeOnly.MinValue),
             StressLevel = foundMentalRecord.StressLevel,
             Mood = foundMentalRecord.Mood
         });
@@ -92,7 +92,7 @@ public class MentalRecordController : ControllerBase
         MentalRecord newMentalRecord = new MentalRecord
         {
             Person = await _context.Persons.FindAsync(newMentalRecordDTO.PersonId),
-            DateOfRecord = newMentalRecordDTO.DateOfRecord,
+            DateOfRecord = DateOnly.FromDateTime(newMentalRecordDTO.DateOfRecord),
             StressLevel = newMentalRecordDTO.StressLevel,
             Mood = newMentalRecordDTO.Mood
         };
@@ -127,7 +127,9 @@ public class MentalRecordController : ControllerBase
 
         // Updates MentalRecord data
         mentalRecordToUpdate.Person = await _context.Persons.FindAsync(mentalRecordDTO.PersonId);
-        mentalRecordToUpdate.DateOfRecord = mentalRecordDTO.DateOfRecord;
+        mentalRecordToUpdate.DateOfRecord = DateOnly.FromDateTime(mentalRecordDTO.DateOfRecord);
+        mentalRecordToUpdate.StressLevel = mentalRecordDTO.StressLevel;
+        mentalRecordToUpdate.Mood = mentalRecordDTO.Mood;
 
         try
         {
