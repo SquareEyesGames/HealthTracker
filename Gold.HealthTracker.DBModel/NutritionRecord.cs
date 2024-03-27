@@ -18,6 +18,6 @@ public class NutritionRecord
     
     // Calory Intake for the whole day
     [Required]
-    [Range(0, 10000)]
+    [Range(0, 100000)]
     public int CalorieIntake { get; set; }
 }
