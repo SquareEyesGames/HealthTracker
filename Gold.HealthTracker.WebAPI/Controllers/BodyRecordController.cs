@@ -32,7 +32,7 @@ public class BodyRecordController : ControllerBase
         if(_context.BodyRecords == null)
             return (IEnumerable<BodyRecordDTO?>)NotFound();
 
-        // Queries all BodyRecords from the database and converts them to PersonDTOs
+        // Queries all BodyRecords from the database and converts them to BodyRecordDTOs
         return _context.BodyRecords
             .Select(bodyRecord => new BodyRecordDTO
             {
@@ -55,7 +55,7 @@ public class BodyRecordController : ControllerBase
     }
 
     /// <summary>
-    /// HTTP GET method with an 'id' parameter to retrieve a specific BodyRecord by their ID
+    /// HTTP GET method with an 'id' parameter to retrieve a specific BodyRecord by its Id
     /// </summary>
     /// <param name="id">PrimaryKey of the BodyRecord</param>
     /// <returns></returns>
@@ -218,10 +218,10 @@ public class BodyRecordController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteBodyRecord(int id)
     {
-        // Finds the person to be deleted
+        // Finds the BodyRecord to be deleted
         BodyRecord? bodyRecordToDelete = await _context.BodyRecords.FindAsync(id);
         
-        // If no person is found, returns a 404 Not Found status
+        // If no BodyRecord is found, returns a 404 Not Found status
         if (bodyRecordToDelete == null)
         {
             return NotFound();
@@ -229,7 +229,7 @@ public class BodyRecordController : ControllerBase
 
         try
         {
-            // Removes the person from the database and saves changes
+            // Removes the BodyRecord from the database and saves changes
             _context.BodyRecords.Remove(bodyRecordToDelete);
             await _context.SaveChangesAsync();
 
