@@ -30,8 +30,10 @@ public class BodyRecordController : ControllerBase
     {
         // Checks if the BodyRecord set is null (which should never be true in a properly configured context)
         if(_context.BodyRecords == null)
+        {
             return (IEnumerable<BodyRecordDTO?>)NotFound();
-
+        }
+        
         // Queries all BodyRecords from the database and converts them to BodyRecordDTOs
         return _context.BodyRecords
             .Select(bodyRecord => new BodyRecordDTO

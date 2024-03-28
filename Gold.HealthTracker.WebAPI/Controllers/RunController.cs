@@ -18,12 +18,20 @@ public class RunController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<RunDTO>>> GetRuns()
+    [ProducesResponseType(200, Type = typeof(RunDTO))]
+    [ProducesResponseType(404)]
+    public IEnumerable<RunDTO?> GetRuns()
     {
-        return await _context.Runs
+        if (_context.Runs == null)
+        {
+            return (IEnumerable<RunDTO?>)NotFound();
+        }
+
+        return _context.Runs
             .Select(run => new RunDTO
             {
                 Id = run.Id,
+                PersonId = run.Person == null ? 0 : run.Person.Id,
                 DateOfRecord = run.DateOfRecord,
                 EnduranceType = run.EnduranceType ?? "",
                 Distance = run.Distance,
@@ -37,128 +45,147 @@ public class RunController : ControllerBase
                 TrainingTime = run.TrainingTime,
                 AverageHeartRate = run.AverageHeartRate,
                 MaxHeartRate = run.MaxHeartRate
-            }).ToListAsync();
+            });
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<RunDTO>> GetRun(int id)
+    [ProducesResponseType(200, Type = typeof(RunDTO))]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult> GetRun(int id)
     {
-        var run = await _context.Runs.FindAsync(id);
+        Run? foundRun = await _context.Runs.FindAsync(id);
 
-        if (run == null)
+        if (foundRun == null)
         {
             return NotFound();
         }
 
-        return new RunDTO
+        return Ok (new RunDTO()
         {
-            Id = run.Id,
-            DateOfRecord = run.DateOfRecord,
-            EnduranceType = run.EnduranceType ?? "",
-            Distance = run.Distance,
-            AverageSpeed = run.AverageSpeed ?? 0,
-            Altitude = run.Altitude ?? 0,
-            Cadence = run.Cadence ?? 0,
-            Weather = run.Weather ?? "",
-            RunningShoes = run.RunningShoes ?? "",
-            CaloriesBurned = run.CaloriesBurned,
-            SessionRating = run.SessionRating,
-            TrainingTime = run.TrainingTime,
-            AverageHeartRate = run.AverageHeartRate,
-            MaxHeartRate = run.MaxHeartRate
-        };
+            Id = foundRun.Id,
+            PersonId = foundRun.Person?.Id ?? 0,
+            DateOfRecord = foundRun.DateOfRecord,
+            EnduranceType = foundRun.EnduranceType ?? "",
+            Distance = foundRun.Distance,
+            AverageSpeed = foundRun.AverageSpeed ?? 0,
+            Altitude = foundRun.Altitude ?? 0,
+            Cadence = foundRun.Cadence ?? 0,
+            Weather = foundRun.Weather ?? "",
+            RunningShoes = foundRun.RunningShoes ?? "",
+            CaloriesBurned = foundRun.CaloriesBurned,
+            SessionRating = foundRun.SessionRating,
+            TrainingTime = foundRun.TrainingTime,
+            AverageHeartRate = foundRun.AverageHeartRate,
+            MaxHeartRate = foundRun.MaxHeartRate
+        });
     }
 
     [HttpPost]
-    public async Task<ActionResult<RunDTO>> PostRun([FromBody] RunDTO runDTO)
+    [ProducesResponseType(201, Type = typeof(int))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> CreateRun(CreateRunDTO newRunDTO)
     {
-        var run = new Run
+        if(!ModelState.IsValid)
         {
-            // Hier erfolgt die Übertragung der Daten von DTO zu Entity
-            EnduranceType = runDTO.EnduranceType,
-            Distance = runDTO.Distance,
-            AverageSpeed = runDTO.AverageSpeed,
-            Altitude = runDTO.Altitude,
-            Cadence = runDTO.Cadence,
-            Weather = runDTO.Weather,
-            RunningShoes = runDTO.RunningShoes,
-            CaloriesBurned = runDTO.CaloriesBurned,
-            SessionRating = runDTO.SessionRating,
-            TrainingTime = runDTO.TrainingTime,
-            AverageHeartRate = runDTO.AverageHeartRate,
-            MaxHeartRate = runDTO.MaxHeartRate,
-            DateOfRecord = runDTO.DateOfRecord,
-            // Achten Sie darauf, die Referenz zu einer existierenden Person herzustellen (falls benötigt)
+            return BadRequest(ModelState);
+        }
+
+        Run newRun = new Run
+        {
+            Person = await _context.Persons.FindAsync(newRunDTO.PersonId),
+            DateOfRecord = newRunDTO.DateOfRecord,
+            EnduranceType = newRunDTO.EnduranceType,
+            Distance = newRunDTO.Distance,
+            AverageSpeed = newRunDTO.AverageSpeed,
+            Altitude = newRunDTO.Altitude,
+            Cadence = newRunDTO.Cadence,
+            Weather = newRunDTO.Weather,
+            RunningShoes = newRunDTO.RunningShoes,
+            CaloriesBurned = newRunDTO.CaloriesBurned,
+            SessionRating = newRunDTO.SessionRating,
+            TrainingTime = newRunDTO.TrainingTime,
+            AverageHeartRate = newRunDTO.AverageHeartRate,
+            MaxHeartRate = newRunDTO.MaxHeartRate,
         };
 
-        _context.Runs.Add(run);
+        await _context.Runs.AddAsync(newRun);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetRun", new { id = run.Id }, runDTO);
+        return CreatedAtAction(nameof(GetRun), new { id = newRun.Id }, newRun.Id);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutRun(int id, [FromBody] RunDTO runDTO)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateRun(int id, CreateRunDTO runDTO)
     {
-        if (id != runDTO.Id)
+        Run? runToUpdate = await _context.Runs.FindAsync(id);
+
+        if (runToUpdate == null)
+        {
+            return NotFound();
+        }
+
+        runToUpdate.Person = await _context.Persons.FindAsync(runDTO.PersonId);
+        runToUpdate.DateOfRecord = runDTO.DateOfRecord;
+        runToUpdate.EnduranceType = runDTO.EnduranceType;
+        runToUpdate.Distance = runDTO.Distance;
+        runToUpdate.AverageSpeed = runDTO.AverageSpeed;
+        runToUpdate.Altitude = runDTO.Altitude;
+        runToUpdate.Cadence = runDTO.Cadence;
+        runToUpdate.Weather = runDTO.Weather;
+        runToUpdate.RunningShoes = runDTO.RunningShoes;
+        runToUpdate.CaloriesBurned = runDTO.CaloriesBurned;
+        runToUpdate.SessionRating = runDTO.SessionRating;
+        runToUpdate.TrainingTime = runDTO.TrainingTime;
+        runToUpdate.AverageHeartRate = runDTO.AverageHeartRate;
+        runToUpdate.MaxHeartRate = runDTO.MaxHeartRate;
+        
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!RunExists(id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+        return NoContent();
+    }
+
+    private bool RunExists(int id)
+    {
+        return _context.Runs.Any(e => e.Id == id);
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteRun(int id)
+    {
+        Run? runToDelete = await _context.Runs.FindAsync(id);
+
+        if (runToDelete == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+        _context.Runs.Remove(runToDelete);
+        await _context.SaveChangesAsync();
+        return NoContent();
+        }
+        catch
         {
             return BadRequest();
         }
-
-        var run = await _context.Runs.FindAsync(id);
-        if (run == null)
-        {
-            return NotFound();
-        }
-
-        // Hier erfolgt die Übertragung der Daten von DTO zu Entity
-        run.EnduranceType = runDTO.EnduranceType;
-        run.Distance = runDTO.Distance;
-        run.AverageSpeed = runDTO.AverageSpeed;
-        run.Altitude = runDTO.Altitude;
-        run.Cadence = runDTO.Cadence;
-        run.Weather = runDTO.Weather;
-        run.RunningShoes = runDTO.RunningShoes;
-        run.CaloriesBurned = runDTO.CaloriesBurned;
-        run.SessionRating = runDTO.SessionRating;
-        run.TrainingTime = runDTO.TrainingTime;
-        run.AverageHeartRate = runDTO.AverageHeartRate;
-        run.MaxHeartRate = runDTO.MaxHeartRate;
-        run.DateOfRecord = runDTO.DateOfRecord;
-
-            _context.Entry(run).State = EntityState.Modified;
-
-    try
-    {
-        await _context.SaveChangesAsync();
     }
-    catch (DbUpdateConcurrencyException)
-    {
-        if (!_context.Runs.Any(e => e.Id == id))
-        {
-            return NotFound();
-        }
-        else
-        {
-            throw;
-        }
-    }
-
-    return NoContent();
-}
-
-[HttpDelete("{id}")]
-public async Task<IActionResult> DeleteRun(int id)
-{
-    var run = await _context.Runs.FindAsync(id);
-    if (run == null)
-    {
-        return NotFound();
-    }
-
-    _context.Runs.Remove(run);
-    await _context.SaveChangesAsync();
-
-    return NoContent();
-}
 }
