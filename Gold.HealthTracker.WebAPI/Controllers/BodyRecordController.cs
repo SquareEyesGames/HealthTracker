@@ -33,7 +33,7 @@ public class BodyRecordController : ControllerBase
         {
             return (IEnumerable<BodyRecordDTO?>)NotFound();
         }
-        
+
         // Queries all BodyRecords from the database and converts them to BodyRecordDTOs
         return _context.BodyRecords
             .Select(bodyRecord => new BodyRecordDTO
@@ -70,7 +70,7 @@ public class BodyRecordController : ControllerBase
         BodyRecord? foundBodyRecord = await _context.BodyRecords.FindAsync(id);
 
         // If no BodyRecord is found, returns a 404 Not Found status
-        if (foundBodyRecord == null)
+        if(foundBodyRecord == null)
         {
             return NotFound();
         }
@@ -153,6 +153,7 @@ public class BodyRecordController : ControllerBase
     {
         // Finds the BodyRecord to update
         BodyRecord? bodyRecordToUpdate = await _context.BodyRecords.FindAsync(id);
+        
         if (bodyRecordToUpdate == null)
         {
             return NotFound();
