@@ -24,6 +24,7 @@ public class WorkoutController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<ActionResult<IEnumerable<WorkoutDTO>>> GetWorkouts()
     {
+        
         var workouts = await _context.Workouts
             .Include(workout => workout.Exercises)
                 .ThenInclude(exercise => exercise.Sets)
@@ -49,6 +50,11 @@ public class WorkoutController : ControllerBase
                 }).ToList()
             }).ToListAsync();
 
+        if (workouts == null)
+        {
+            return NotFound();
+        }
+        
         return Ok(workouts);
     }
 
@@ -65,7 +71,7 @@ public class WorkoutController : ControllerBase
             .Select(workout => new WorkoutDTO
             {
                 Id = workout.Id,
-                PersonId = workout.Person?.Id ?? 0,
+                PersonId = workout.Person.Id,
                 DateOfRecord = workout.DateOfRecord,
                 TrainingTime = workout.TrainingTime,
                 AverageHeartRate = workout.AverageHeartRate,
@@ -96,11 +102,25 @@ public class WorkoutController : ControllerBase
 
     // Add a new workout with exercises and sets
     [HttpPost]
+    [ProducesResponseType(201, Type = typeof(int))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<WorkoutDTO>> CreateWorkout(CreateWorkoutDTO createWorkoutDTO)
     {
+        if (!createWorkoutDTO.PersonId.HasValue)
+        {
+            return BadRequest("PersonId is required.");
+        }
+
+        var person = await _context.Persons.FindAsync(createWorkoutDTO.PersonId.Value);
+
+        if (person == null)
+        {
+            return NotFound($"No person found with ID {createWorkoutDTO.PersonId.Value}.");
+        }
+    
         var workout = new Workout
         {
-            PersonId = createWorkoutDTO.PersonId.Value, // Assuming PersonId is required and will always have a value.
+            Person = await _context.Persons.FindAsync(createWorkoutDTO.PersonId),
             DateOfRecord = createWorkoutDTO.DateOfRecord,
             TrainingTime = createWorkoutDTO.TrainingTime,
             AverageHeartRate = createWorkoutDTO.AverageHeartRate,
@@ -130,87 +150,101 @@ public class WorkoutController : ControllerBase
 
     // Update an existing workout with exercises and sets
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateWorkout(int id, CreateWorkoutDTO workoutDTO)
     {
-        if (id != workoutDTO.Id)
+        
+        var workoutToUpdate = await _context.Workouts
+            .Include(w => w.Exercises)
+            .ThenInclude(e => e.Sets)
+            .FirstOrDefaultAsync(w => w.Id == id);
+
+        if (workoutToUpdate == null)
             {
-        return BadRequest("Workout ID mismatch.");
-    }
+                return NotFound();
+            }
 
-    var workoutToUpdate = await _context.Workouts
-        .Include(w => w.Exercises)
-        .ThenInclude(e => e.Sets)
-        .FirstOrDefaultAsync(w => w.Id == id);
-
-    if (workoutToUpdate == null)
-    {
-        return NotFound("Workout not found.");
-    }
-
-    // Updating workout properties
-    workoutToUpdate.DateOfRecord = workoutDTO.DateOfRecord;
-    workoutToUpdate.TrainingTime = workoutDTO.TrainingTime;
-    workoutToUpdate.AverageHeartRate = workoutDTO.AverageHeartRate;
-    workoutToUpdate.MaxHeartRate = workoutDTO.MaxHeartRate;
-    workoutToUpdate.CaloriesBurned = workoutDTO.CaloriesBurned;
-    workoutToUpdate.SessionRating = workoutDTO.SessionRating;
-    workoutToUpdate.TrainingLocation = workoutDTO.TrainingLocation;
-
-    // Updating exercises and sets
-    workoutToUpdate.Exercises.Clear(); // Clear existing exercises to replace with updated ones
-
-    foreach (var exerciseDTO in workoutDTO.Exercises)
-    {
-        var exercise = new Exercise
-        {
-            ExerciseName = exerciseDTO.ExerciseName,
-            Sets = exerciseDTO.Sets.Select(s => new Set
-            {
-                Repetitions = s.Repetitions,
-                Weight = s.Weight
-            }).ToList()
-        };
-
-        workoutToUpdate.Exercises.Add(exercise);
-    }
-
-    try
-    {
-        await _context.SaveChangesAsync();
-    }
-    catch (DbUpdateConcurrencyException ex)
-    {
-        if (!WorkoutExists(id))
+        if (workoutToUpdate == null)
         {
             return NotFound("Workout not found.");
         }
-        else
+
+        // Updating workout properties
+        workoutToUpdate.DateOfRecord = workoutDTO.DateOfRecord;
+        workoutToUpdate.TrainingTime = workoutDTO.TrainingTime;
+        workoutToUpdate.AverageHeartRate = workoutDTO.AverageHeartRate;
+        workoutToUpdate.MaxHeartRate = workoutDTO.MaxHeartRate;
+        workoutToUpdate.CaloriesBurned = workoutDTO.CaloriesBurned;
+        workoutToUpdate.SessionRating = workoutDTO.SessionRating;
+        workoutToUpdate.TrainingLocation = workoutDTO.TrainingLocation;
+
+        // Updating exercises and sets
+        workoutToUpdate.Exercises.Clear(); // Clear existing exercises to replace with updated ones
+
+        foreach (var exerciseDTO in workoutDTO.Exercises)
         {
-            return BadRequest("Unable to update the workout: " + ex.Message);
+            var exercise = new Exercise
+            {
+                ExerciseName = exerciseDTO.ExerciseName,
+                Sets = exerciseDTO.Sets.Select(s => new Set
+                {
+                    Repetitions = s.Repetitions,
+                    Weight = s.Weight
+                }).ToList()
+            };
+
+            workoutToUpdate.Exercises.Add(exercise);
+        }
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            if (!WorkoutExists(id))
+            {
+                return NotFound("Workout not found.");
+            }
+            else
+            {
+                return BadRequest("Unable to update the workout: " + ex.Message);
+            }
+        }
+
+        return NoContent(); // Success, workout updated
+    }
+
+    private bool WorkoutExists(int id)
+    {
+        return _context.Workouts.Any(w => w.Id == id);
+    }
+
+    // Delete a workout by ID
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteWorkout(int id)
+    {
+        Workout? workoutToDelete = await _context.Workouts.FindAsync(id);
+
+        if (workoutToDelete == null)
+        {
+            return NotFound("Workout not found.");
+        }
+
+        try
+        {
+            _context.Workouts.Remove(workoutToDelete);
+            await _context.SaveChangesAsync();
+
+            return NoContent(); // Success, workout deleted
+        }
+        catch
+        {
+            return BadRequest("Die Anfrage konnte nicht verarbeitet werden.");
         }
     }
-
-    return NoContent(); // Success, workout updated
-}
-
-private bool WorkoutExists(int id)
-{
-    return _context.Workouts.Any(w => w.Id == id);
-}
-
-// Delete a workout by ID
-[HttpDelete("{id}")]
-public async Task<IActionResult> DeleteWorkout(int id)
-{
-    var workoutToDelete = await _context.Workouts.FindAsync(id);
-    if (workoutToDelete == null)
-    {
-        return NotFound("Workout not found.");
-    }
-
-    _context.Workouts.Remove(workoutToDelete);
-    await _context.SaveChangesAsync();
-
-    return NoContent(); // Success, workout deleted
-}
 }
