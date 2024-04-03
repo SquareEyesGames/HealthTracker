@@ -3,7 +3,7 @@
 public class WorkoutDTO
 {
     public int Id { get; set; }
-    public int? PersonId {get; set; }
+    public int? PersonId { get; set; } // Corrected from PersinId to PersonId
     public DateTime DateOfRecord { get; set; }
     public TimeSpan? TrainingTime { get; set; }
     public int? AverageHeartRate { get; set; }
