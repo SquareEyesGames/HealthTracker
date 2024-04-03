@@ -56,7 +56,6 @@ public class SleepRecordController : ControllerBase
             DateOfRecord = foundSleepRecord.DateOfRecord.ToDateTime(TimeOnly.MinValue),
             Bedtime = foundSleepRecord.Bedtime,
             WakeUpTime = foundSleepRecord.WakeUpTime,
-            TimeAsleep = foundSleepRecord.TimeAsleep,
             SleepQuality = foundSleepRecord.SleepQuality
         });
     }
@@ -77,7 +76,6 @@ public class SleepRecordController : ControllerBase
             DateOfRecord = DateOnly.FromDateTime(newSleepRecordDTO.DateOfRecord),
             Bedtime = newSleepRecordDTO.Bedtime,
             WakeUpTime = newSleepRecordDTO.WakeUpTime,
-            TimeAsleep = newSleepRecordDTO.TimeAsleep,
             SleepQuality = newSleepRecordDTO.SleepQuality
         };
 
@@ -102,7 +100,6 @@ public class SleepRecordController : ControllerBase
         sleepRecordToUpdate.DateOfRecord = DateOnly.FromDateTime(sleepRecordDTO.DateOfRecord);
         sleepRecordToUpdate.Bedtime = sleepRecordDTO.Bedtime;
         sleepRecordToUpdate.WakeUpTime = sleepRecordDTO.WakeUpTime;
-        sleepRecordToUpdate.TimeAsleep = sleepRecordDTO.TimeAsleep;
         sleepRecordToUpdate.SleepQuality = sleepRecordDTO.SleepQuality;
 
         try

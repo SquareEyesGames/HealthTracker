@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gold.HealthTracker.DBModel;
 
@@ -9,6 +10,7 @@ public class SleepRecord
     public int Id { get; set; }
 
     // Nullable virtual navigation property back to Person. The '?' and 'virtual' indicate it supports lazy loading and may not always have a value.
+    [ForeignKey("PersonId")]
     [Required]
     public virtual Person? Person { get; set; }
 
